@@ -1,4 +1,4 @@
-package com.example.autolistapps.ui
+package com.example.autolistapps.presentation.ui.appslist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,15 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.autolistapps.model.Item0
-import com.example.autolistapps.model.sample.sampleItems
+import com.example.autolistapps.data.model.sample.sampleItems2
+import com.example.autolistapps.domain.model.AppItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(app: Item0) {
+fun DetailScreen(app: AppItem) {
     var showDialog by remember { mutableStateOf(false) }
     Scaffold(
-        topBar = { TopAppBar(title = { Text(app.name) }) }
+        topBar = { TopAppBar(title = { Text(app.name.orEmpty()) }) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -79,6 +79,6 @@ fun DetailScreen(app: Item0) {
 @Composable
 fun DetailScreenPreview() {
     MaterialTheme {
-        DetailScreen(sampleItems.first())
+        DetailScreen(sampleItems2.first())
     }
 }

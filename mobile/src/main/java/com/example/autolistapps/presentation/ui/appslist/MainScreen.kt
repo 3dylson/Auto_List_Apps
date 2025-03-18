@@ -1,4 +1,4 @@
-package com.example.autolistapps.ui
+package com.example.autolistapps.presentation.ui.appslist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -26,12 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.autolistapps.model.Item0
-import com.example.autolistapps.model.sample.sampleItems
+import com.example.autolistapps.data.model.sample.sampleItems
+import com.example.autolistapps.data.model.sample.sampleItems2
+import com.example.autolistapps.domain.model.AppItem
+import com.example.autolistapps.presentation.ui.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(apps: List<Item0>, navController: NavController) {
+fun MainScreen(apps: List<AppItem>, navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("App Store") })
@@ -57,8 +59,8 @@ fun MainScreen(apps: List<Item0>, navController: NavController) {
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
-                            Text(text = app.name, style = MaterialTheme.typography.headlineSmall)
-                            Text(text = app.store_name, style = MaterialTheme.typography.bodyMedium)
+                            Text(text = app.name.orEmpty(), style = MaterialTheme.typography.headlineSmall)
+                            Text(text = app.storeName.orEmpty(), style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }
@@ -71,6 +73,6 @@ fun MainScreen(apps: List<Item0>, navController: NavController) {
 @Composable
 fun MainScreenPreview() {
     MaterialTheme {
-        MainScreen(sampleItems, navController = NavController(LocalContext.current))
+        MainScreen(sampleItems2, navController = NavController(LocalContext.current))
     }
 }

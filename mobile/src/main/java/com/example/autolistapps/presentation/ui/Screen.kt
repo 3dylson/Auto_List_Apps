@@ -1,4 +1,4 @@
-package com.example.autolistapps.ui
+package com.example.autolistapps.presentation.ui
 
 sealed class Screen(val route: String) {
     data object MainScreen : Screen("main")
