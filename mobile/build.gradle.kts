@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit.moshi)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

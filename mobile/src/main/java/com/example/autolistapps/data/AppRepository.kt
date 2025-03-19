@@ -25,4 +25,8 @@ class AppRepository {
             emit(Result.failure(e))
         }
     }
+
+    fun hasNewApps(): Boolean {
+        return true
+    }
 }

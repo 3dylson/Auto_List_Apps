@@ -9,11 +9,14 @@ import com.example.autolistapps.presentation.ui.appslist.DetailScreen
 import com.example.autolistapps.presentation.ui.appslist.MainScreen
 
 @Composable
-fun AppNavigation(apps: List<AppItem>) {
+fun AppNavigation(apps: List<AppItem>, onPermissionGranted: () -> Unit) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
         composable(Screen.MainScreen.route) {
-            MainScreen(apps = apps, navController = navController)
+            MainScreen(
+                apps = apps, navController = navController,
+                onPermissionGranted = onPermissionGranted
+            )
         }
         composable(Screen.DetailScreen.route + "/{appId}") { backStackEntry ->
             // Find the app by its ID from the list;
