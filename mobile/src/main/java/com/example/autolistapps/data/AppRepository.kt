@@ -9,6 +9,5 @@ interface AppRepository {
     suspend fun refresh(): Result<List<AppItem>>
     fun getAppById(id: Int): Flow<AppItem?>
     suspend fun hasNewApps(): Boolean
-    suspend fun addAll(appList: List<AppItem>)
 
 }

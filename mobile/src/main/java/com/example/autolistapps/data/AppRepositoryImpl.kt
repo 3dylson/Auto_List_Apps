@@ -8,6 +8,8 @@ import com.example.autolistapps.domain.toDomainModel
 import com.example.autolistapps.domain.toLocalModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 class AppRepositoryImpl @Inject constructor(
@@ -15,6 +17,7 @@ class AppRepositoryImpl @Inject constructor(
     private val remote: AptoideAPI
 ) : AppRepository {
 
+    private val appsCacheMutex = Mutex()
     private var remoteAppsCache: List<AppItem>? = null
 
     override val appList: Flow<List<AppItem>> =
@@ -29,20 +32,27 @@ class AppRepositoryImpl @Inject constructor(
 
     override suspend fun refresh(): Result<List<AppItem>> {
         return try {
-            val remoteApps = remoteAppsCache ?: run {
-                Log.d("AppRepository", "Fetching remote apps")
-                val response = remote.getListApps()
-                response.responses?.listApps?.datasets?.all?.data?.list
-                    ?.mapNotNull { it?.toDomainModel() }
-                    ?: emptyList()
+            val remoteApps = appsCacheMutex.withLock {
+                remoteAppsCache ?: run {
+                    Log.d("AppRepository", "Fetching remote apps")
+                    val response = remote.getListApps()
+                    response.responses?.listApps?.datasets?.all?.data?.list
+                        ?.mapNotNull { it?.toDomainModel() }
+                        ?: emptyList()
+                }
             }
 
             local.insertAll(remoteApps.map { it.toLocalModel() })
-            remoteAppsCache = null
+            Log.d("AppRepository", "Added ${remoteApps.size} apps to local storage")
+            appsCacheMutex.withLock {
+                this.remoteAppsCache = null
+            }
             Result.success(remoteApps)
         } catch (e: Exception) {
             Log.e("AppRepository", "Error fetching app list: ${e.message}")
-            remoteAppsCache = null
+            appsCacheMutex.withLock {
+                this.remoteAppsCache = null
+            }
             Result.failure(e)
         }
     }
@@ -51,7 +61,7 @@ class AppRepositoryImpl @Inject constructor(
      * Compare local apps with remote apps and return `true` if there's any difference.
      * For simplicity, let's:
      *  - Compare size to detect new items
-     *  - Then optionally check if any remote app's ID is missing locally.
+     *  - Then check if any remote app's ID is missing locally.
      */
     override suspend fun hasNewApps(): Boolean {
         try {
@@ -63,7 +73,9 @@ class AppRepositoryImpl @Inject constructor(
                 ?.mapNotNull { it?.toDomainModel() }
                 ?: emptyList()
 
-            remoteAppsCache = remoteApps
+            appsCacheMutex.withLock {
+                this.remoteAppsCache = remoteApps
+            }
 
             if (remoteApps.size != localApps.size) return true
             if (remoteApps.any { it.id !in localIds }) return true
@@ -73,11 +85,5 @@ class AppRepositoryImpl @Inject constructor(
             Log.e("AppRepository", "Error checking for new apps: ${e.message}")
             return false
         }
-    }
-
-    override suspend fun addAll(appList: List<AppItem>) {
-        local.insertAll(
-            appList.map { it.toLocalModel() }
-        )
     }
 }

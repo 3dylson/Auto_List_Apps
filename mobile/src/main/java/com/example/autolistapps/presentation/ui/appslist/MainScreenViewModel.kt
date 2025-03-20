@@ -1,5 +1,6 @@
 package com.example.autolistapps.presentation.ui.appslist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.autolistapps.data.AppRepository
@@ -26,6 +27,7 @@ class MainScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val hasNewApps = repository.hasNewApps()
             if (hasNewApps) {
+                Log.d("MainScreenViewModel", "New apps available")
                 val result = repository.refresh()
                 if (result.isFailure) {
                     _uiState.value = Error(result.exceptionOrNull())
