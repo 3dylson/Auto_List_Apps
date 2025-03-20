@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 interface AppRepository {
     val appList: Flow<List<AppItem>>
 
-    suspend fun getListApps(): Result<List<AppItem>>
+    suspend fun refresh(): Result<List<AppItem>>
     fun getAppById(id: Int): Flow<AppItem?>
-    fun hasNewApps(): Boolean
+    suspend fun hasNewApps(): Boolean
     suspend fun addAll(appList: List<AppItem>)
 
 }
