@@ -10,8 +10,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.autolistapps.R
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class NotificationHelper(private val context: Context) {
+class NotificationHelper @Inject constructor(@ApplicationContext private val context: Context) {
 
     companion object {
         private const val CHANNEL_ID = "new_apps_channel"

@@ -2,23 +2,24 @@ package com.example.autolistapps.presentation
 
 import android.content.Context
 import android.util.Log
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.autolistapps.domain.CheckNewAppsUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class NewAppsWorker(
-    appContext: Context,
-    workerParams: WorkerParameters,
+@HiltWorker
+class NewAppsWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val checkNewAppsUseCase: CheckNewAppsUseCase,
+    private val notificationHelper: NotificationHelper
 ) : CoroutineWorker(appContext, workerParams) {
 
-    // TODO Inject private val checkNewAppsUseCase: CheckNewAppsUseCase,
-    //    private val notificationHelper: NotificationHelper
-
     override suspend fun doWork(): Result = try {
-        // TODO:
-        //val newAppsAvailable = checkNewAppsUseCase(Unit)
-        val notificationHelper = NotificationHelper(applicationContext)
-        val newAppsAvailable = true
-        if (newAppsAvailable) {
+        val newAppsAvailable = checkNewAppsUseCase(Unit)
+        if (newAppsAvailable.getOrDefault(false)) {
             notificationHelper.showNewAppsNotification()
             Log.d("NewAppsWorker", "New apps available")
         }

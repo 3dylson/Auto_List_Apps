@@ -91,10 +91,12 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.hilt.work)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    kapt(libs.hilt.work.compiler)
 
     // Hilt and Instrumented Tests
     androidTestImplementation(libs.hilt.android.testing)
