@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,16 +27,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.autolistapps.data.model.sample.sampleItems2
-import com.example.autolistapps.domain.model.AppItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(app: AppItem) {
+fun DetailScreen(viewModel: MainScreenViewModel = hiltViewModel(), appId: Int) {
+
+    val app by viewModel.getAppById(appId).collectAsState()
+
     var showDialog by remember { mutableStateOf(false) }
     Scaffold(
-        topBar = { TopAppBar(title = { Text(app.name.orEmpty()) }) }
+        topBar = { TopAppBar(title = { Text(app?.name.orEmpty()) }) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -46,8 +49,8 @@ fun DetailScreen(app: AppItem) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = rememberAsyncImagePainter(app.graphic),
-                contentDescription = "${app.name} Graphic",
+                painter = rememberAsyncImagePainter(app?.graphic),
+                contentDescription = "${app?.name} Graphic",
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
@@ -79,6 +82,6 @@ fun DetailScreen(app: AppItem) {
 @Composable
 fun DetailScreenPreview() {
     MaterialTheme {
-        DetailScreen(sampleItems2.first())
+        DetailScreen(appId = -1)
     }
 }

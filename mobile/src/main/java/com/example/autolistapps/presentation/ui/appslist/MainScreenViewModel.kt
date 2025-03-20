@@ -1,39 +1,35 @@
-import androidx.activity.result.launch
+package com.example.autolistapps.presentation.ui.appslist
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.autolistapps.data.AppRepository
 import com.example.autolistapps.domain.model.AppItem
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.example.autolistapps.presentation.ui.appslist.AppListUiState.Error
+import com.example.autolistapps.presentation.ui.appslist.AppListUiState.Success
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class MainScreenViewModel(private val repository: AppRepository) : ViewModel() {
+@HiltViewModel
+class MainScreenViewModel @Inject constructor(private val repository: AppRepository) :
+    ViewModel() {
+        val uiState: StateFlow<AppListUiState> = repository
+        .appList.map<List<AppItem>, AppListUiState>(::Success)
+        .catch { emit(Error(it)) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppListUiState.Loading)
 
-    sealed class AppListUiState {
-        data object Loading : AppListUiState()
-        data class Success(val data: List<AppItem>) : AppListUiState()
-        data class Error(val exception: Throwable) : AppListUiState()
+    fun getAppById(appId: Int): StateFlow<AppItem?> {
+        return repository.getAppById(appId)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
     }
+}
 
-    private val _appList = MutableStateFlow<AppListUiState>(AppListUiState.Loading)
-    val appList: StateFlow<AppListUiState> = _appList.asStateFlow()
-
-    fun getListApps() {
-        viewModelScope.launch {
-            repository.getListApps()
-                .onStart { _appList.value = AppListUiState.Loading }
-                .catch { throwable ->
-                    _appList.value = AppListUiState.Error(throwable)
-                }
-                .collect { result ->
-                    _appList.value = when {
-                        result.isSuccess -> AppListUiState.Success(result.getOrThrow())
-                        else -> AppListUiState.Error(result.exceptionOrNull() ?: UnknownError())
-                    }
-                }
-        }
-    }
+sealed class AppListUiState {
+    data object Loading : AppListUiState()
+    data class Success(val data: List<AppItem>) : AppListUiState()
+    data class Error(val exception: Throwable) : AppListUiState()
 }
