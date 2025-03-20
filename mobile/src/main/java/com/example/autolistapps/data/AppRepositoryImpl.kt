@@ -1,14 +1,17 @@
 package com.example.autolistapps.data
 
 import android.util.Log
-import com.example.autolistapps.data.remote.RetrofitClient
+import com.example.autolistapps.data.local.AppItemLocalModelDao
+import com.example.autolistapps.data.remote.AptoideAPI
 import com.example.autolistapps.domain.model.AppItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class AppRepositoryImpl @Inject constructor() : AppRepository {
-    private val api = RetrofitClient.apiAptoide
+class AppRepositoryImpl @Inject constructor(
+    private val local: AppItemLocalModelDao,
+    private val remote: AptoideAPI
+) : AppRepository {
 
     override val appList: Flow<List<AppItem>> = flow {
         val networkApps = getListApps().getOrNull() ?: emptyList()
@@ -17,7 +20,7 @@ class AppRepositoryImpl @Inject constructor() : AppRepository {
 
     override suspend fun getListApps(): Result<List<AppItem>> {
         return try {
-            val response = api.getListApps()
+            val response = remote.getListApps()
             val appItemList =
                 response.responses?.listApps?.datasets?.all?.data?.list?.mapNotNull { appResponseItem ->
                     appResponseItem?.let {
@@ -43,7 +46,10 @@ class AppRepositoryImpl @Inject constructor() : AppRepository {
         emit(app)
     }
 
-    fun hasNewApps(): Boolean {
-        return true
+    // For simplicity, we'll assume there are always new apps
+    override fun hasNewApps(): Boolean = true
+
+    override suspend fun addAll(appList: List<AppItem>) {
+
     }
 }
