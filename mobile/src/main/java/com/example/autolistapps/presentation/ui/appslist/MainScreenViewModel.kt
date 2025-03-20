@@ -23,6 +23,9 @@ class MainScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AppListUiState>(AppListUiState.Loading)
     val uiState: StateFlow<AppListUiState> = _uiState.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     init {
         viewModelScope.launch {
             val hasNewApps = repository.hasNewApps()
@@ -45,14 +48,18 @@ class MainScreenViewModel @Inject constructor(
     }
 
 
-    fun checkForUpdates() {
+    fun onRefresh() {
         viewModelScope.launch {
-            val hasNewApps = repository.hasNewApps()
-            if (hasNewApps) {
-                val result = repository.refresh()
-                if (result.isFailure) {
-                    _uiState.value = Error(result.exceptionOrNull())
+            Log.d("MainScreenViewModel", "onRefresh called")
+            _isRefreshing.value = true
+            try {
+                val hasNew = repository.hasNewApps()
+                if (hasNew) {
+                    Log.d("MainScreenViewModel", "New apps available")
+                    repository.refresh()
                 }
+            } finally {
+                _isRefreshing.value = false
             }
         }
     }

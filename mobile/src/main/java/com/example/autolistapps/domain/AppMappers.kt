@@ -10,7 +10,8 @@ fun AppItemLocalModel.toDomainModel(): AppItem {
         name = this.name,
         icon = this.icon,
         storeName = this.storeName,
-        graphic = this.graphic
+        graphic = this.graphic,
+        downloads = this.downloads
     )
 }
 
@@ -20,7 +21,8 @@ fun AppItem.toLocalModel(): AppItemLocalModel {
         name = this.name,
         icon = this.icon,
         storeName = this.storeName,
-        graphic = this.graphic
+        graphic = this.graphic,
+        downloads = this.downloads
     )
 }
 
@@ -29,5 +31,6 @@ fun Item0.toDomainModel(): AppItem = AppItem(
     name = name,
     icon = icon,
     storeName = storeName,
-    graphic = graphic
+    graphic = graphic,
+    downloads = this.downloads
 )

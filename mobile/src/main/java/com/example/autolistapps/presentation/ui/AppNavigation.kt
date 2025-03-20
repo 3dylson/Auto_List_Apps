@@ -22,7 +22,7 @@ fun AppNavigation(onPermissionGranted: () -> Unit) {
         composable(Screen.DetailScreen.route + "/{appId}") { backStackEntry ->
             val appId = backStackEntry.arguments?.getString("appId")?.toIntOrNull()
             if (appId != null) {
-                DetailScreen(appId = appId)
+                DetailScreen(appId = appId, navController = navController)
             }
         }
     }

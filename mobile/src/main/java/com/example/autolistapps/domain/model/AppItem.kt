@@ -6,4 +6,5 @@ data class AppItem(
     val icon: String?,
     val storeName: String?,
     val graphic: String?,
+    val downloads: Int?,
 )
