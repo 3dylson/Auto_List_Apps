@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.autolistapps.data.AppRepository
+import com.example.autolistapps.domain.CheckNewAppsUseCase
 import com.example.autolistapps.domain.model.AppItem
-import com.example.autolistapps.presentation.ui.appslist.AppListUiState.Error
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val repository: AppRepository
+    private val repository: AppRepository,
+    private val checkNewAppsUseCase: CheckNewAppsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AppListUiState>(AppListUiState.Loading)
@@ -28,14 +29,7 @@ class MainScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val hasNewApps = repository.hasNewApps()
-            if (hasNewApps) {
-                Log.d("MainScreenViewModel", "New apps available")
-                val result = repository.refresh()
-                if (result.isFailure) {
-                    _uiState.value = Error(result.exceptionOrNull())
-                }
-            }
+            checkNewAppsUseCase.invoke(Unit)
 
             repository.appList.collect { list ->
                 _uiState.value = if (list.isEmpty()) {
@@ -53,11 +47,7 @@ class MainScreenViewModel @Inject constructor(
             Log.d("MainScreenViewModel", "onRefresh called")
             _isRefreshing.value = true
             try {
-                val hasNew = repository.hasNewApps()
-                if (hasNew) {
-                    Log.d("MainScreenViewModel", "New apps available")
-                    repository.refresh()
-                }
+                checkNewAppsUseCase.invoke(Unit)
             } finally {
                 _isRefreshing.value = false
             }
