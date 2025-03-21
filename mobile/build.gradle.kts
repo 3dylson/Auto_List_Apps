@@ -19,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.autolistapps.HiltTestRunner"
     }
 
     buildTypes {
@@ -51,6 +51,10 @@ android {
 
 dependencies {
 
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -73,7 +77,6 @@ dependencies {
     // UI Components
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -110,6 +113,17 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.rules)
+    implementation(libs.androidx.ui.test.junit4.android)
+    implementation(libs.androidx.navigation.testing)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Local tests: jUnit, coroutines, Android runner
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 
 }
 

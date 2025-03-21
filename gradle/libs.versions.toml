@@ -3,8 +3,6 @@ agp = "8.8.1"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.10.1"
@@ -30,6 +28,14 @@ hilt = "2.55"
 ksp = "2.1.0-1.0.29"
 androidxHilt = "1.2.0"
 hiltWork = "1.2.0"
+robolectric = "4.10.3"
+uiTestJunit4Android = "1.7.8"
+navigationTesting = "2.8.9"
+androidxTest = "1.5.0"
+androidxTestRunner = "1.5.0"
+rules = "1.5.0"
+junitVersion = "1.1.5"
+espressoCore = "3.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -72,6 +78,13 @@ hilt-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", 
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 hilt-work-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTest" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+androidx-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationTesting" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

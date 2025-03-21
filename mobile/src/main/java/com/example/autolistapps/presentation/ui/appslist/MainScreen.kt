@@ -49,7 +49,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.autolistapps.domain.model.AppItem
 import com.example.autolistapps.presentation.ui.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel = hiltViewModel(),
@@ -79,6 +78,18 @@ fun MainScreen(
         is AppListUiState.Success -> state.data
     }
 
+    MainScreen(isRefreshing, { viewModel.onRefresh() }, uiState, apps, navController)
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun MainScreen(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    uiState: AppListUiState,
+    apps: List<AppItem>,
+    navController: NavController
+) {
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp
     val isTablet = screenWidthDp >= 600
@@ -91,7 +102,7 @@ fun MainScreen(
                 actions = {
                     IconButton(
                         enabled = !isRefreshing,
-                        onClick = { viewModel.onRefresh() }
+                        onClick = { onRefresh.invoke() }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
@@ -105,7 +116,7 @@ fun MainScreen(
         PullToRefreshBox(
             modifier = Modifier.padding(paddingValues),
             isRefreshing = isRefreshing,
-            onRefresh = { viewModel.onRefresh() }
+            onRefresh = { onRefresh.invoke() }
         ) {
             if (uiState is AppListUiState.Loading && !isRefreshing) {
                 Box(
